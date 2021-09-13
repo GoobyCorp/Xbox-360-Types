@@ -78,6 +78,9 @@ struct BL_HDR_WITH_NONCE {
 #define CE_SE_5BL_HDR  BL_HDR_WITH_NONCE
 #define CF_SF_6BL_HDR  BL_HDR_WITH_NONCE
 
+// structs - XeCrypt
+
+
 // enums - flash
 enum BL_MAGIC {
 	CA_1BL = 0x0342,
