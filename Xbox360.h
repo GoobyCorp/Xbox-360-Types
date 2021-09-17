@@ -4,7 +4,6 @@
 // constants
 #define TRUE                        1
 #define FALSE                       0
-#define RC4_INT                     unsigned int
 #define SHA_LBLOCK	                16
 #define XECRYPT_SHA_DIGEST_SIZE	    20
 #define XECRYPT_HMAC_SHA_MAX_KEY_SZ	64
@@ -107,8 +106,8 @@ typedef SHA_CTX XECRYPT_SHA_STATE, *PXECRYPT_SHA_STATE;
 // structs - XeCrypt - ciphers
 typedef struct rc4_key_st
 {
-	RC4_INT x,y;
-	RC4_INT data[256];
+	DWORD x, y;
+	DWORD data[256];
 } RC4_KEY;
 
 typedef struct des_key {
@@ -252,41 +251,51 @@ typedef XECRYPT_DES3_STATE* PXECRYPT_DES3_STATE;
 // prototypes - XeCrypt
 void XeCryptUidEccEncode(PBYTE pbaCpuKey);
 int  XeCryptHammingWeight(PBYTE data, DWORD len);
-void XeCryptHmacSha(const PBYTE pbKey, DWORD cbKey, const PBYTE pbInp1, DWORD cbInp1, const PBYTE pbInp2, DWORD cbInp2, const PBYTE pbInp3, DWORD cbInp3, PBYTE pbOut, DWORD cbOut);
-void XeCryptRc4(PBYTE pbKey, DWORD cbKey, PBYTE pbInpOut, DWORD cbInpOut);
-void XeCryptRc4Key(PXECRYPT_RC4_STATE pRc4State, PBYTE pbKey, DWORD cbKey);
-void XeCryptRc4Ecb(PXECRYPT_RC4_STATE pRc4State, PBYTE pbInpOut, DWORD cbInpOut);
-void XeCryptRandom(PBYTE pb, DWORD cb);
-void XeCryptAesKey(PXECRYPT_AES_STATE pAesState, const PBYTE pbKey);
-void XeCryptAesEcb(PXECRYPT_AES_STATE pAesState, PBYTE pbInp, PBYTE pbOut, BOOL fEncrypt);
-void XeCryptAesCbc(PXECRYPT_AES_STATE pAesState, PBYTE pbInp, DWORD cbInp, PBYTE pbOut, PBYTE pbFeed, BOOL fEncrypt);
+void XeCryptBnQw_SwapDwQwLeBe(const PBYTE pqwInp, PBYTE pqwOut, DWORD cqw);
+
+// prototypes - XeCrypt - PRNG
+void XeCryptRandom(PBYTE pbOut, DWORD cbOut);
+
+// prototypes - XeCrypt - checksums
+void XeCryptRotSum(PBYTE pbOut, PBYTE pbInp, DWORD cqwInp);
+
+// prototypes - XeCrypt - hashing
+void XeCryptMd5Init(PXECRYPT_MD5_STATE pMd5State);
+void XeCryptMd5Update(PXECRYPT_MD5_STATE pMd5State, const PBYTE pbInp, DWORD cbInp);
+void XeCryptMd5Final(PXECRYPT_MD5_STATE pMd5State, PBYTE pbOut, DWORD cbOut);
+void XeCryptMd5(const PBYTE pbInp1, DWORD cbInp1, const PBYTE pbInp2, DWORD cbInp2, const PBYTE pbInp3, DWORD cbInp3, PBYTE pbOut, DWORD cbOut);
 void XeCryptShaInit(PXECRYPT_SHA_STATE pShaState);
 void XeCryptShaUpdate(PXECRYPT_SHA_STATE pShaState, PBYTE pbInp, DWORD cbInp);
 void XeCryptShaFinal(PXECRYPT_SHA_STATE pShaState, PBYTE pbOut, DWORD cbOut);
 void XeCryptSha(PBYTE pbInp1, DWORD cbInp1, PBYTE pbInp2, DWORD cbInp2, PBYTE pbInp3, DWORD cbInp3, PBYTE pbOut, DWORD cbOut);
-void XeCryptRotSum(PBYTE pbOut, PBYTE pbInp, DWORD cqwInp);
 void XeCryptRotSumSha(PBYTE pbInp1, DWORD cbInp1, PBYTE pbInp2, DWORD cbInp2, PBYTE pbOut, DWORD cbOut);
-void XeCryptBnDwLePkcs1Format(const PBYTE pbHash, DWORD dwType, PBYTE pbSig, DWORD cbSig);
+
+// prototypes - XeCrypt - MAC
+void XeCryptHmacSha(const PBYTE pbKey, DWORD cbKey, const PBYTE pbInp1, DWORD cbInp1, const PBYTE pbInp2, DWORD cbInp2, const PBYTE pbInp3, DWORD cbInp3, PBYTE pbOut, DWORD cbOut);
+
+// prototypes - XeCrypt - ciphers
+void XeCryptDesKey(PXECRYPT_DES_STATE pDesState, const PBYTE pbKey);
+void XeCryptDesEcb(PXECRYPT_DES_STATE pDesState, const PBYTE pbInp, PBYTE pbOut, BOOL fEncrypt);
+void XeCryptDesCbc(PXECRYPT_DES_STATE pDesState, const PBYTE pbInp, DWORD cbInp, PBYTE pbOut, PBYTE pbFeed, BOOL fEncrypt);
+void XeCryptDes3Key(PXECRYPT_DES3_STATE pDes3State, const PBYTE pbKey);
+void XeCryptDes3Ecb(PXECRYPT_DES3_STATE pDes3State, const PBYTE pbInp, PBYTE pbOut, BOOL fEncrypt);
+void XeCryptDes3Cbc(PXECRYPT_DES3_STATE pDes3State, const PBYTE pbInp, DWORD cbInp, PBYTE pbOut, PBYTE pbFeed, BOOL fEncrypt);
+void XeCryptRc4(PBYTE pbKey, DWORD cbKey, PBYTE pbInpOut, DWORD cbInpOut);
+void XeCryptRc4Key(PXECRYPT_RC4_STATE pRc4State, PBYTE pbKey, DWORD cbKey);
+void XeCryptRc4Ecb(PXECRYPT_RC4_STATE pRc4State, PBYTE pbInpOut, DWORD cbInpOut);
+void XeCryptAesKey(PXECRYPT_AES_STATE pAesState, const PBYTE pbKey);
+void XeCryptAesEcb(PXECRYPT_AES_STATE pAesState, PBYTE pbInp, PBYTE pbOut, BOOL fEncrypt);
+void XeCryptAesCbc(PXECRYPT_AES_STATE pAesState, PBYTE pbInp, DWORD cbInp, PBYTE pbOut, PBYTE pbFeed, BOOL fEncrypt);
+
+// prototypes - XeCrypt - PKC (Public Key Cryptography)
 BOOL XeCryptBnQwNeRsaKeyGen(DWORD cbits, DWORD dwPubExp, PXECRYPT_RSA pRsaPub, PXECRYPT_RSA pRsaPrv);
-void XeCryptBnQw_SwapDwQwLeBe(const PBYTE pqwInp, PBYTE pqwOut, DWORD cqw);
 void XeCryptBnQwBeSigFormat(PXECRYPT_SIG pSig, const PBYTE pbHash, const PBYTE pbSalt);
 BOOL XeCryptBnQwBeSigCreate(PXECRYPT_SIG pSig, const PBYTE pbHash, const PBYTE pbSalt, const PXECRYPT_RSA pRsa);
 BOOL XeCryptBnQwBeSigVerify(PXECRYPT_SIG pSig, const PBYTE pbHash, const PBYTE pbSalt, const PXECRYPT_RSA pRsa);
 BOOL XeCryptBnQwNeModExpRoot(PQWORD pqwOut, const PQWORD pqwIn, const PQWORD pqwPP, const PQWORD pqwQQ, const PQWORD pqwDP, const PQWORD pqwDQ, const PQWORD pqwCR, DWORD cqw);
 BOOL XeCryptBnQwNeRsaPrvCrypt(const PQWORD pqwIn, PQWORD pqwOut, const PXECRYPT_RSA pRsa);
 BOOL XeCryptBnQwNeRsaPubCrypt(const PQWORD pqwIn, PQWORD pqwOut, const PXECRYPT_RSA pRsa);
+void XeCryptBnDwLePkcs1Format(const PBYTE pbHash, DWORD dwType, PBYTE pbSig, DWORD cbSig);
 BOOL XeKeysPkcs1Verify(const PBYTE pbHash, const PBYTE pbSig, const PXECRYPT_RSA pRsaPub);
-void XeCryptDesKey(PXECRYPT_DES_STATE pDesState, const PBYTE pbKey);
-void XeCryptDesEcb(PXECRYPT_DES_STATE pDesState, const PBYTE pbInp, PBYTE pbOut, BOOL fEncrypt);
-// WARNING: Cbc and DES3 stuff is not tested yet!
-void XeCryptDesCbc(PXECRYPT_DES_STATE pDesState, const PBYTE pbInp, DWORD cbInp, PBYTE pbOut, PBYTE pbFeed, BOOL fEncrypt);
-void XeCryptDes3Key(PXECRYPT_DES3_STATE pDes3State, const PBYTE pbKey);
-void XeCryptDes3Ecb(PXECRYPT_DES3_STATE pDes3State, const PBYTE pbInp, PBYTE pbOut, BOOL fEncrypt);
-void XeCryptDes3Cbc(PXECRYPT_DES3_STATE pDes3State, const PBYTE pbInp, DWORD cbInp, PBYTE pbOut, PBYTE pbFeed, BOOL fEncrypt);
-void XeCryptMd5Init(PXECRYPT_MD5_STATE pMd5State);
-void XeCryptMd5Update(PXECRYPT_MD5_STATE pMd5State, const PBYTE pbInp, DWORD cbInp);
-void XeCryptMd5Final(PXECRYPT_MD5_STATE pMd5State, PBYTE pbOut, DWORD cbOut);
-void XeCryptMd5(const PBYTE pbInp1, DWORD cbInp1, const PBYTE pbInp2, DWORD cbInp2, const PBYTE pbInp3, DWORD cbInp3, PBYTE pbOut, DWORD cbOut);
-
 
 #endif
