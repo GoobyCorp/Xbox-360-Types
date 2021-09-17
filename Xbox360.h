@@ -4,9 +4,9 @@
 // constants
 #define TRUE                        1
 #define FALSE                       0
-#define SHA_LBLOCK	                16
+#define SHA_LBLOCK                  16
 #define XECRYPT_SHA_DIGEST_SIZE	    20
-#define XECRYPT_HMAC_SHA_MAX_KEY_SZ	64
+#define XECRYPT_HMAC_SHA_MAX_KEY_SZ 64
 #define XECRYPT_DES_BLOCK_SIZE      8
 #define XECRYPT_DES_KEY_SIZE        8
 #define XECRYPT_DES3_BLOCK_SIZE     8
@@ -15,7 +15,7 @@
 #define XECRYPT_AES_BLOCK_SIZE      16
 #define XECRYPT_AES_KEY_SIZE        16
 #define XECRYPT_AES_FEED_SIZE       16
-#define XECRYPT_ROTSUM_DIGEST_SIZE	32
+#define XECRYPT_ROTSUM_DIGEST_SIZE  32
 
 #if defined(AES_VAR) || defined(AES_256)
 #define KS_LENGTH       60
